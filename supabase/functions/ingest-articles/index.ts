@@ -8,40 +8,67 @@ const corsHeaders = {
 
 // ── Classification ──────────────────────────────────────────────────────────
 
+// Words that indicate general news / not business impact even if company names appear
+const NOISE_PATTERNS = [
+  /attack/i, /accused/i, /arrest/i, /murder/i, /kill/i, /assault/i,
+  /police/i, /crime/i, /lawsuit against/i, /sued/i, /scandal/i,
+  /divorce/i, /death/i, /died/i, /shooting/i, /bomb/i, /threat/i,
+  /protest/i, /fired from/i, /resign/i, /controversy/i,
+];
+
 const BUILDER_KEYWORDS = [
-  "api", "sdk", "framework", "open source", "open-source", "oss", "agent", "agents",
+  "api", "sdk", "framework", "open source", "open-source", "oss", "agent framework",
   "mcp", "rag", "vector database", "vector db", "vectordb", "evals", "eval",
-  "fine-tuning", "fine tuning", "finetuning", "inference", "llm", "model",
+  "fine-tuning", "fine tuning", "finetuning", "inference",
   "developer", "tutorial", "engineering", "github", "repository", "repo",
   "library", "package", "npm", "pip", "crate", "deploy", "kubernetes",
   "docker", "devops", "mlops", "langchain", "llamaindex", "hugging face",
-  "huggingface", "transformer", "benchmark", "training", "dataset",
+  "huggingface", "transformer", "benchmark", "training data", "dataset",
 ];
 
 const TOOL_KEYWORDS = [
-  "tool", "app", "plugin", "extension", "assistant", "workflow",
-  "browser", "chrome", "productivity", "saas", "product", "launch",
-  "try it", "free", "beta", "waitlist", "playground", "demo",
-  "copilot", "chatbot", "generator", "editor", "builder",
-  "no-code", "low-code", "nocode", "ai tool", "ai app",
+  "ai tool", "ai app", "ai plugin", "ai extension", "ai assistant", "ai workflow",
+  "browser extension", "chrome extension", "productivity app", "saas",
+  "try it", "free tier", "beta access", "waitlist", "playground", "demo",
+  "copilot", "chatbot", "generator", "ai editor", "ai builder",
+  "no-code", "low-code", "nocode", "new tool", "just launched",
 ];
 
+// Business Impact requires STRONG signals — not just company name mentions
 const BUSINESS_KEYWORDS = [
-  "enterprise", "roi", "adoption", "productivity", "automation",
-  "cost reduction", "customer support", "gtm", "go-to-market",
-  "sales", "marketing", "hr", "operations", "consulting",
-  "business", "revenue", "efficiency", "transformation",
-  "case study", "implementation", "strategy", "workforce",
-  "finance", "supply chain", "logistics",
+  "enterprise ai", "ai adoption", "ai roi", "return on investment",
+  "cost reduction", "cost savings", "customer support automation",
+  "go-to-market", "gtm strategy", "sales automation", "marketing automation",
+  "hr automation", "ai operations", "ai consulting",
+  "business transformation", "digital transformation", "ai revenue",
+  "efficiency gains", "workforce ai", "ai strategy",
+  "case study", "implementation story", "ai deployment",
+  "supply chain ai", "logistics ai", "finance ai",
+  "productivity gains", "automation roi", "ai business case",
+  "enterprise adoption", "ai spending", "ai budget",
+  "competitive advantage", "market impact", "industry disruption",
 ];
 
-function classifyArticle(title: string, description: string): { primary_lane: string; secondary_tags: string[] } {
+function classifyArticle(title: string, description: string, source?: string): { primary_lane: string; secondary_tags: string[] } {
   const text = `${title} ${description}`.toLowerCase();
   const tags: string[] = [];
 
+  // Check for noise — if the article is about crime/scandal, it's always Pulse
+  const isNoise = NOISE_PATTERNS.some(p => p.test(text));
+
+  // Score using keyword matching (require multi-word phrases to match more strictly)
   const builderScore = BUILDER_KEYWORDS.filter(k => text.includes(k)).length;
   const toolScore = TOOL_KEYWORDS.filter(k => text.includes(k)).length;
   const businessScore = BUSINESS_KEYWORDS.filter(k => text.includes(k)).length;
+
+  // Source-based boosting: Substack and Medium articles are more likely analysis/business content
+  const isAnalysisSource = source && (
+    source.toLowerCase().includes("substack") ||
+    source.toLowerCase().includes("medium") ||
+    source.toLowerCase().includes("strategy") ||
+    source.toLowerCase().includes("operator")
+  );
+  const businessBoost = isAnalysisSource ? 1 : 0;
 
   // Collect tags
   if (text.includes("api")) tags.push("API");
@@ -61,17 +88,31 @@ function classifyArticle(title: string, description: string): { primary_lane: st
   if (text.includes("automat")) tags.push("automation");
   if (text.includes("productiv")) tags.push("productivity");
   if (text.includes("tutorial") || text.includes("guide") || text.includes("how to")) tags.push("tutorial");
-  if (text.includes("tool") || text.includes("app")) tags.push("tools");
+  if (text.match(/\bai tool\b|\bai app\b/)) tags.push("tools");
   if (text.includes("launch")) tags.push("launch");
   if (text.includes("workflow")) tags.push("workflow");
   if (text.includes("github")) tags.push("open_source");
+  if (text.includes("case study")) tags.push("case_study");
+
+  // If noise detected, force to pulse regardless of keyword matches
+  if (isNoise) {
+    return { primary_lane: "pulse", secondary_tags: [...new Set(tags)].slice(0, 8) };
+  }
 
   let primary_lane = "pulse";
-  const maxScore = Math.max(builderScore, toolScore, businessScore);
-  if (maxScore > 0) {
+  const adjustedBusinessScore = businessScore + businessBoost;
+  const maxScore = Math.max(builderScore, toolScore, adjustedBusinessScore);
+
+  // Require a minimum threshold for non-pulse classification
+  if (maxScore >= 2) {
     if (builderScore === maxScore) primary_lane = "builder_lab";
     else if (toolScore === maxScore) primary_lane = "tool_radar";
-    else if (businessScore === maxScore) primary_lane = "business_impact";
+    else if (adjustedBusinessScore === maxScore) primary_lane = "business_impact";
+  } else if (maxScore === 1) {
+    // Single keyword match — only classify if it's a strong signal
+    if (builderScore === 1 && toolScore === 0 && adjustedBusinessScore === 0) primary_lane = "builder_lab";
+    else if (toolScore === 1 && builderScore === 0 && adjustedBusinessScore === 0) primary_lane = "tool_radar";
+    // Single business keyword is NOT enough — keep as pulse
   }
 
   return { primary_lane, secondary_tags: [...new Set(tags)].slice(0, 8) };
@@ -395,7 +436,7 @@ serve(async (req) => {
 
     const canonical = canonicalize(article.url);
     const hash = await hashString(canonical);
-    const { primary_lane, secondary_tags } = classifyArticle(article.title, article.description || "");
+    const { primary_lane, secondary_tags } = classifyArticle(article.title, article.description || "", article.source || "");
 
     try {
       const { error } = await supabase.from("articles").insert({
