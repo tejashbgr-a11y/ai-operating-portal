@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import { ArrowRight, Activity, TrendingUp, Wrench, Code2, Zap, Sparkles } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { ArticleCard } from '@/components/ArticleCard';
