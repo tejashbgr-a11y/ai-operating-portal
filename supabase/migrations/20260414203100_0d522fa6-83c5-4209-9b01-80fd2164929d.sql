@@ -1,0 +1,3 @@
+DELETE FROM public.articles
+WHERE LOWER(COALESCE(source, '')) ~ '(india today|news18|times now|times of india|ndtv|ndtv\.com|ndtv profit|hindustan times|livemint|economic times|financial express|free press journal|new indian express|pinkvilla|koimoi|bollywood hungama|filmibeat|mid-day|zee news|republic|aaj tak|abp news|deccan chronicle)'
+   OR LOWER(title || ' ' || COALESCE(description, '')) ~ '(bollywood|varun dhawan|mrunal thakur|pooja hegde|jawani|ishq hona hai|chennai|\bindia\b|\bindian\b|mumbai|delhi|bengaluru|hyderabad|neet ug|jee|rs ?[0-9]+|rupees?|talk to jesus|just like me|shah rukh|salman khan|deepika|alia bhatt|cricket|\bipl\b|tollywood|kollywood)';
