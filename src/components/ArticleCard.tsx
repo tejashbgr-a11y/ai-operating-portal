@@ -39,18 +39,20 @@ export function ArticleCard({ article }: ArticleCardProps) {
   };
 
   return (
-    <Card className="group transition-shadow hover:shadow-md border-border/60">
+    <Card className="group relative overflow-hidden transition-all duration-300 hover:shadow-[0_0_30px_-8px_hsl(var(--primary)/0.15)] border-border/40 hover:border-primary/20">
+      {/* Top accent line */}
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
       <CardContent className="p-4 space-y-3">
         <div className="flex items-start justify-between gap-3">
-          <div className="space-y-1.5 flex-1 min-w-0">
+          <div className="space-y-2 flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
-              <Badge variant="outline" className={`text-[10px] font-semibold uppercase tracking-wider border ${getLaneBadgeClasses(article.primary_lane)}`}>
+              <Badge variant="outline" className={`text-[10px] font-bold uppercase tracking-widest border ${getLaneBadgeClasses(article.primary_lane)}`}>
                 {getLaneLabel(article.primary_lane)}
               </Badge>
               {article.source && (
-                <span className="text-[11px] text-muted-foreground font-medium">{article.source}</span>
+                <span className="text-[10px] text-muted-foreground font-mono">{article.source}</span>
               )}
-              <span className="text-[11px] text-muted-foreground">
+              <span className="text-[10px] text-muted-foreground font-mono">
                 {relativeTime(article.published_at)}
               </span>
             </div>
@@ -69,22 +71,22 @@ export function ArticleCard({ article }: ArticleCardProps) {
         )}
 
         <div className="flex items-center justify-between pt-1">
-          <div className="flex gap-1 flex-wrap">
+          <div className="flex gap-1.5 flex-wrap">
             {tags.map(tag => (
-              <span key={tag} className="text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground">
+              <span key={tag} className="text-[9px] font-mono px-1.5 py-0.5 rounded-sm bg-muted/60 text-muted-foreground border border-border/30">
                 {tag}
               </span>
             ))}
           </div>
-          <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
-            <Button variant="ghost" size="icon" className="h-7 w-7" onClick={handleSave} title={saved ? 'Unsave' : 'Save for later'}>
-              <Bookmark className={`h-3.5 w-3.5 ${saved ? 'fill-current' : ''}`} />
+          <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+            <Button variant="ghost" size="icon" className="h-7 w-7 hover:text-primary" onClick={handleSave}>
+              <Bookmark className={`h-3.5 w-3.5 ${saved ? 'fill-primary text-primary' : ''}`} />
             </Button>
-            <Button variant="ghost" size="icon" className="h-7 w-7" onClick={handleShare} title="Copy link">
+            <Button variant="ghost" size="icon" className="h-7 w-7 hover:text-primary" onClick={handleShare}>
               <Share2 className="h-3.5 w-3.5" />
             </Button>
-            <Button variant="ghost" size="icon" className="h-7 w-7" asChild>
-              <a href={article.url} target="_blank" rel="noopener noreferrer" title="Read original">
+            <Button variant="ghost" size="icon" className="h-7 w-7 hover:text-primary" asChild>
+              <a href={article.url} target="_blank" rel="noopener noreferrer">
                 <ExternalLink className="h-3.5 w-3.5" />
               </a>
             </Button>

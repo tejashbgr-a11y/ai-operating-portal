@@ -40,9 +40,13 @@ export default function LanePage() {
   const empty = LANE_EMPTY[lane as Lane];
 
   return (
-    <div className="space-y-5">
-      <div className="space-y-1">
-        <h1 className={`font-heading text-xl font-bold ${laneConfig.textClass}`}>{laneConfig.label}</h1>
+    <div className="space-y-6">
+      <div className="space-y-2">
+        <div className="flex items-center gap-2">
+          <div className={`h-1.5 w-1.5 rounded-full ${laneConfig.textClass}`} style={{ boxShadow: `0 0 8px ${laneConfig.color}` }} />
+          <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-[0.2em]">{laneConfig.question}</span>
+        </div>
+        <h1 className={`font-heading text-2xl font-bold ${laneConfig.textClass}`}>{laneConfig.label}</h1>
         <p className="text-sm text-muted-foreground">{laneConfig.shortDescription}</p>
       </div>
 

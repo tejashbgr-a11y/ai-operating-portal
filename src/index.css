@@ -2,87 +2,54 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap');
 
 @layer base {
   :root {
-    --background: 220 16% 96%;
-    --foreground: 220 20% 10%;
+    --background: 240 10% 6%;
+    --foreground: 220 15% 90%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 220 20% 10%;
+    --card: 240 8% 9%;
+    --card-foreground: 220 15% 90%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 220 20% 10%;
+    --popover: 240 8% 9%;
+    --popover-foreground: 220 15% 90%;
 
-    --primary: 220 70% 50%;
+    --primary: 260 100% 65%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 220 14% 90%;
-    --secondary-foreground: 220 20% 20%;
+    --secondary: 240 8% 14%;
+    --secondary-foreground: 220 15% 80%;
 
-    --muted: 220 14% 94%;
-    --muted-foreground: 220 10% 46%;
+    --muted: 240 6% 12%;
+    --muted-foreground: 220 8% 50%;
 
-    --accent: 220 14% 90%;
-    --accent-foreground: 220 20% 10%;
+    --accent: 240 8% 14%;
+    --accent-foreground: 220 15% 90%;
 
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 220 13% 88%;
-    --input: 220 13% 88%;
-    --ring: 220 70% 50%;
+    --border: 240 6% 15%;
+    --input: 240 6% 15%;
+    --ring: 260 100% 65%;
 
-    --radius: 0.5rem;
+    --radius: 0.625rem;
 
-    /* Lane colors */
-    --lane-pulse: 220 70% 50%;
-    --lane-business: 160 60% 40%;
-    --lane-tools: 280 60% 50%;
-    --lane-builder: 30 80% 50%;
+    /* Lane colors — vivid neon-like */
+    --lane-pulse: 220 100% 65%;
+    --lane-business: 160 90% 45%;
+    --lane-tools: 280 100% 68%;
+    --lane-builder: 25 100% 58%;
 
     /* Surfaces */
-    --surface-elevated: 0 0% 100%;
-    --surface-sunken: 220 16% 93%;
-  }
+    --surface-elevated: 240 8% 11%;
+    --surface-sunken: 240 10% 4%;
 
-  .dark {
-    --background: 222 30% 8%;
-    --foreground: 220 14% 92%;
-
-    --card: 222 25% 12%;
-    --card-foreground: 220 14% 92%;
-
-    --popover: 222 25% 12%;
-    --popover-foreground: 220 14% 92%;
-
-    --primary: 220 70% 55%;
-    --primary-foreground: 0 0% 100%;
-
-    --secondary: 222 20% 18%;
-    --secondary-foreground: 220 14% 85%;
-
-    --muted: 222 20% 16%;
-    --muted-foreground: 220 10% 55%;
-
-    --accent: 222 20% 18%;
-    --accent-foreground: 220 14% 92%;
-
-    --destructive: 0 62% 40%;
-    --destructive-foreground: 0 0% 100%;
-
-    --border: 222 20% 18%;
-    --input: 222 20% 18%;
-    --ring: 220 70% 55%;
-
-    --lane-pulse: 220 70% 60%;
-    --lane-business: 160 60% 50%;
-    --lane-tools: 280 60% 60%;
-    --lane-builder: 30 80% 55%;
-
-    --surface-elevated: 222 25% 14%;
-    --surface-sunken: 222 30% 6%;
+    /* Glow effects */
+    --glow-primary: 260 100% 65%;
+    --glow-sm: 0 0 20px -5px;
+    --glow-md: 0 0 40px -10px;
   }
 }
 
@@ -92,11 +59,24 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
     font-family: 'Inter', system-ui, sans-serif;
   }
 
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Space Grotesk', system-ui, sans-serif;
+    letter-spacing: -0.02em;
+  }
+
+  code, .font-mono {
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* Subtle grid texture */
+  .bg-grid {
+    background-image:
+      linear-gradient(to right, hsl(240 6% 15% / 0.3) 1px, transparent 1px),
+      linear-gradient(to bottom, hsl(240 6% 15% / 0.3) 1px, transparent 1px);
+    background-size: 40px 40px;
   }
 }

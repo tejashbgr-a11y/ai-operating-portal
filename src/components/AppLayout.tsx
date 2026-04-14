@@ -10,14 +10,14 @@ export function AppLayout() {
   }, [search]);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background bg-grid">
       <TopNav search={search} onSearchChange={setSearch} />
-      <main className="container py-6">
+      <main className="container py-8">
         <Outlet context={{ search }} />
       </main>
-      <footer className="border-t py-4">
-        <div className="container text-center text-[11px] text-muted-foreground">
-          AI Operating Portal — Built for operators, founders, and builders.
+      <footer className="border-t border-border/30 py-5">
+        <div className="container text-center text-[10px] font-mono text-muted-foreground/50 uppercase tracking-widest">
+          AI Operating Portal — Signal for operators & builders
         </div>
       </footer>
     </div>

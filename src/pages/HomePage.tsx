@@ -1,8 +1,7 @@
 import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Activity, TrendingUp, Wrench, Code2 } from 'lucide-react';
+import { ArrowRight, Activity, TrendingUp, Wrench, Code2, Zap } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { ArticleCard } from '@/components/ArticleCard';
 import { NewsletterSignup } from '@/components/NewsletterSignup';
 import { EmptyState } from '@/components/EmptyState';
@@ -23,7 +22,6 @@ export default function HomePage() {
 
   const topPicks = useMemo(() => {
     if (!articles) return [];
-    // Pick top 2 from each lane for variety
     const byLane: Record<string, typeof articles> = {};
     articles.forEach(a => {
       if (!byLane[a.primary_lane]) byLane[a.primary_lane] = [];
@@ -38,21 +36,29 @@ export default function HomePage() {
   }, [articles]);
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-10">
       {/* Hero */}
-      <section className="space-y-2">
-        <h1 className="font-heading text-2xl font-bold tracking-tight">AI Operating Portal</h1>
-        <p className="text-sm text-muted-foreground max-w-xl">
-          Your daily intelligence feed for AI developments, business impact, tools, and builder resources — curated for operators, founders, and professionals.
+      <section className="relative space-y-4 py-4">
+        <div className="absolute inset-0 -z-10 bg-grid opacity-40" />
+        <div className="flex items-center gap-2 text-primary">
+          <Zap className="h-5 w-5" />
+          <span className="text-[11px] font-mono font-medium uppercase tracking-widest">Intelligence Feed</span>
+        </div>
+        <h1 className="font-heading text-3xl md:text-4xl font-bold tracking-tight leading-tight">
+          AI Operating
+          <span className="bg-gradient-to-r from-primary via-lane-tools to-lane-builder bg-clip-text text-transparent"> Portal</span>
+        </h1>
+        <p className="text-sm text-muted-foreground max-w-lg leading-relaxed">
+          Your daily signal for AI developments, business impact, tools, and builder resources — curated for operators, founders, and professionals.
         </p>
       </section>
 
       {/* Today in AI strip */}
       {todaySummary?.summary_text && (
-        <Card className="border-primary/20 bg-primary/5">
+        <Card className="border-primary/20 bg-primary/5 shadow-[0_0_30px_-10px_hsl(var(--primary)/0.15)]">
           <CardContent className="p-4">
-            <h2 className="font-heading text-xs font-semibold uppercase tracking-wider text-primary mb-1">Today in AI</h2>
-            <p className="text-sm text-foreground/80">{todaySummary.summary_text}</p>
+            <h2 className="font-heading text-[10px] font-bold uppercase tracking-[0.2em] text-primary mb-2">Today in AI</h2>
+            <p className="text-sm text-foreground/80 leading-relaxed">{todaySummary.summary_text}</p>
           </CardContent>
         </Card>
       )}
@@ -63,16 +69,17 @@ export default function HomePage() {
           const lane = LANES[id];
           return (
             <Link key={id} to={`/${id}`}>
-              <Card className="h-full hover:shadow-md transition-shadow cursor-pointer group">
-                <CardContent className="p-4 space-y-2">
+              <Card className="h-full transition-all duration-300 cursor-pointer group border-border/30 hover:border-primary/20 hover:shadow-[0_0_25px_-8px_hsl(var(--primary)/0.12)] relative overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-transparent to-primary/[0.02] group-hover:to-primary/[0.05] transition-all" />
+                <CardContent className="p-4 space-y-3 relative">
                   <div className={`flex items-center gap-2 ${lane.textClass}`}>
                     {LANE_ICONS[id]}
-                    <span className="font-heading font-semibold text-sm">{lane.label}</span>
+                    <span className="font-heading font-bold text-sm">{lane.label}</span>
                   </div>
                   <p className="text-[11px] text-muted-foreground leading-relaxed">{lane.question}</p>
-                  <div className="flex items-center gap-1 text-[11px] text-muted-foreground group-hover:text-foreground transition-colors">
-                    <span>Explore</span>
-                    <ArrowRight className="h-3 w-3" />
+                  <div className="flex items-center gap-1 text-[10px] font-mono text-muted-foreground group-hover:text-primary transition-colors">
+                    <span>explore</span>
+                    <ArrowRight className="h-3 w-3 group-hover:translate-x-0.5 transition-transform" />
                   </div>
                 </CardContent>
               </Card>
@@ -81,10 +88,14 @@ export default function HomePage() {
         })}
       </section>
 
-      <div className="grid lg:grid-cols-3 gap-6">
+      <div className="grid lg:grid-cols-3 gap-8">
         {/* Top picks */}
-        <section className="lg:col-span-2 space-y-3">
-          <h2 className="font-heading font-semibold text-base">Top picks today</h2>
+        <section className="lg:col-span-2 space-y-4">
+          <div className="flex items-center gap-2">
+            <div className="h-px flex-1 bg-gradient-to-r from-primary/30 to-transparent" />
+            <h2 className="font-heading font-bold text-sm uppercase tracking-widest text-muted-foreground shrink-0">Top Picks</h2>
+            <div className="h-px flex-1 bg-gradient-to-l from-primary/30 to-transparent" />
+          </div>
           {isLoading ? (
             <div className="space-y-3">
               {[...Array(4)].map((_, i) => <Skeleton key={i} className="h-28 w-full rounded-lg" />)}
