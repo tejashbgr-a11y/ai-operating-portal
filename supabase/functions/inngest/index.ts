@@ -5,8 +5,8 @@ const inngest = new Inngest({ id: "ai-operating-portal" });
 
 // ── Scheduled: Article Ingestion (every 12 hours) ───────────
 const ingestArticles = inngest.createFunction(
-  { id: "ingest-articles-scheduled", name: "Ingest Articles (12h)" },
-  { cron: "0 */12 * * *" },
+  { id: "ingest-articles-scheduled", name: "Ingest Articles (Hourly)" },
+  { cron: "0 * * * *" },
   async ({ step }) => {
     const result = await step.run("call-ingest-edge-function", async () => {
       const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
