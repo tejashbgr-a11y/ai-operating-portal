@@ -236,10 +236,11 @@ async function fetchGitHubTrending(): Promise<any[]> {
   try {
     // Use GitHub API search for recently created/updated AI repos
     const queries = [
-      "topic:ai+topic:llm+pushed:>" + getDateDaysAgo(2),
-      "topic:agent+topic:framework+pushed:>" + getDateDaysAgo(2),
-      "topic:rag+pushed:>" + getDateDaysAgo(3),
-      "topic:mcp+pushed:>" + getDateDaysAgo(3),
+      `topic:ai topic:llm pushed:>${getDateDaysAgo(2)}`,
+      `topic:agent topic:framework pushed:>${getDateDaysAgo(2)}`,
+      `topic:rag pushed:>${getDateDaysAgo(3)}`,
+      `topic:mcp pushed:>${getDateDaysAgo(3)}`,
+      `AI tool stars:>50 pushed:>${getDateDaysAgo(3)}`,
     ];
 
     for (const q of queries) {
