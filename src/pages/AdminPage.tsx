@@ -123,6 +123,21 @@ export default function AdminPage() {
         </Card>
       )}
 
+      {/* Inngest Cron Schedule */}
+      <Card className="border-primary/20 bg-primary/5">
+        <CardContent className="p-4 flex items-center gap-3">
+          <Timer className="h-5 w-5 text-primary" />
+          <div className="flex-1">
+            <p className="text-sm font-semibold">Automated Ingestion Schedule</p>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              Inngest cron: <code className="bg-background/50 px-1 py-0.5 rounded text-[10px] font-mono">0 * * * *</code> — Articles ingested every hour + summaries regenerated.
+              Daily full summary at <code className="bg-background/50 px-1 py-0.5 rounded text-[10px] font-mono">6:00 UTC</code>.
+            </p>
+          </div>
+          <Badge variant="default" className="text-[10px]">Active</Badge>
+        </CardContent>
+      </Card>
+
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
         <Card className="border-border/30">
