@@ -21,6 +21,13 @@ const NOISE_PATTERNS = [
   /nollywood/i, /tollywood/i, /kollywood/i, /tamil movie/i,
   /hindi movie/i, /telugu movie/i, /punjabi movie/i,
   /celebrity gossip/i, /entertainment news/i,
+  // More entertainment / celebrity patterns
+  /varun dhawan/i, /mrunal thakur/i, /pooja hegde/i, /starrer/i,
+  /salman khan/i, /shah rukh/i, /srk/i, /alia bhatt/i, /deepika/i,
+  /ranveer/i, /akshay kumar/i, /katrina/i, /anushka/i,
+  /song launch/i, /teaser/i, /poster reveal/i, /celebrity/i,
+  /red carpet/i, /award show/i, /bigg boss/i,
+  /cute.*kids.*steal/i, /romantic comedy/i, /rom-com/i,
 ];
 
 const BUILDER_KEYWORDS = [
