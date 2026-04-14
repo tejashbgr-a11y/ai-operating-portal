@@ -7,6 +7,7 @@ import { AppLayout } from "@/components/AppLayout";
 import HomePage from "@/pages/HomePage";
 import LanePage from "@/pages/LanePage";
 import AdminPage from "@/pages/AdminPage";
+import WeeklyDigestPage from "@/pages/WeeklyDigestPage";
 import NotFound from "@/pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -21,6 +22,7 @@ const App = () => (
           <Route element={<AppLayout />}>
             <Route path="/" element={<HomePage />} />
             <Route path="/:lane" element={<LanePage />} />
+            <Route path="/weekly-digest" element={<WeeklyDigestPage />} />
             <Route path="/admin" element={<AdminPage />} />
           </Route>
           <Route path="*" element={<NotFound />} />

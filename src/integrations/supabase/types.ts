@@ -280,6 +280,45 @@ export type Database = {
         }
         Relationships: []
       }
+      weekly_digests: {
+        Row: {
+          article_ids: Json | null
+          generated_at: string
+          id: string
+          intro: string | null
+          sections: Json
+          status: string
+          title: string
+          week_end: string
+          week_start: string
+          wildcard_picks: Json | null
+        }
+        Insert: {
+          article_ids?: Json | null
+          generated_at?: string
+          id?: string
+          intro?: string | null
+          sections?: Json
+          status?: string
+          title: string
+          week_end: string
+          week_start: string
+          wildcard_picks?: Json | null
+        }
+        Update: {
+          article_ids?: Json | null
+          generated_at?: string
+          id?: string
+          intro?: string | null
+          sections?: Json
+          status?: string
+          title?: string
+          week_end?: string
+          week_start?: string
+          wildcard_picks?: Json | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
