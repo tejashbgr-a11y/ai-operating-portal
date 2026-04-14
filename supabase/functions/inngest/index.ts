@@ -1,14 +1,14 @@
-import { Inngest } from "npm:inngest@3";
-import { serve } from "npm:inngest@3/deno";
+import { Inngest } from "jsr:@inngest/sdk@^3.45";
+import { serve } from "jsr:@inngest/sdk@^3.45/deno/fresh";
 
 const inngest = new Inngest({ id: "ai-operating-portal" });
 
-// ── Scheduled: Article Ingestion (every 12 hours) ───────────
+// ── Scheduled: Article Ingestion + Summaries (every hour) ───
 const ingestArticles = inngest.createFunction(
   { id: "ingest-articles-scheduled", name: "Ingest Articles (Hourly)" },
   { cron: "0 * * * *" },
   async ({ step }) => {
-    const result = await step.run("call-ingest-edge-function", async () => {
+    const ingestionResult = await step.run("call-ingest-edge-function", async () => {
       const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
       const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
       
@@ -28,7 +28,27 @@ const ingestArticles = inngest.createFunction(
       return await res.json();
     });
 
-    return { event: "ingest-articles", result };
+    // After ingestion, regenerate daily summaries so top picks stay fresh
+    const summaryResult = await step.run("regenerate-summaries", async () => {
+      const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+      const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+
+      const res = await fetch(`${supabaseUrl}/functions/v1/generate-summaries`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${supabaseServiceKey}`,
+        },
+      });
+
+      if (!res.ok) {
+        throw new Error(`Summary generation failed [${res.status}]: ${await res.text()}`);
+      }
+
+      return await res.json();
+    });
+
+    return { event: "ingest-articles", ingestionResult, summaryResult };
   }
 );
 
