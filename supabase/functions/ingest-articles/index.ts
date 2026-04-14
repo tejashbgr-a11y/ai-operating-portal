@@ -158,7 +158,7 @@ const GNEWS_QUERIES = [
 
 async function fetchGNews(apiKey: string): Promise<any[]> {
   const articles: any[] = [];
-  for (const { query } of GNEWS_QUERIES) {
+  for (const { query, lane_hint: query_lane_hint } of GNEWS_QUERIES) {
     try {
       const url = `https://gnews.io/api/v4/search?q=${encodeURIComponent(query)}&lang=en&max=10&apikey=${apiKey}`;
       const res = await fetch(url);
