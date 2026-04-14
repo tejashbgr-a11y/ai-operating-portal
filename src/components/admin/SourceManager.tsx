@@ -1,18 +1,28 @@
 import { useState } from 'react';
 import { Plus, ToggleLeft, ToggleRight, Globe, Rss } from 'lucide-react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useSources } from '@/hooks/useArticles';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { useQueryClient } from '@tanstack/react-query';
+
+function useAllSources() {
+  return useQuery({
+    queryKey: ['all_sources'],
+    queryFn: async () => {
+      const { data, error } = await supabase.from('sources').select('*').order('name');
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+}
 
 export function SourceManager() {
-  const { data: sources, isLoading } = useSources();
+  const { data: sources, isLoading } = useAllSources();
   const [showAdd, setShowAdd] = useState(false);
   const [name, setName] = useState('');
   const [url, setUrl] = useState('');
@@ -41,7 +51,7 @@ export function SourceManager() {
       setUrl('');
       setCategory('');
       setShowAdd(false);
-      queryClient.invalidateQueries({ queryKey: ['sources'] });
+      queryClient.invalidateQueries({ queryKey: ['all_sources'] });
     } catch (err: any) {
       toast({ description: `Failed to add source: ${err.message}`, variant: 'destructive' });
     } finally {
@@ -57,7 +67,7 @@ export function SourceManager() {
         .update({ is_active: !currentlyActive })
         .eq('id', id);
       if (error) throw error;
-      queryClient.invalidateQueries({ queryKey: ['sources'] });
+      queryClient.invalidateQueries({ queryKey: ['all_sources'] });
       toast({ description: `Source ${!currentlyActive ? 'activated' : 'deactivated'}.` });
     } catch (err: any) {
       toast({ description: `Toggle failed: ${err.message}`, variant: 'destructive' });
@@ -65,23 +75,6 @@ export function SourceManager() {
       setTogglingId(null);
     }
   };
-
-  // Also fetch inactive sources
-  const [allSources, setAllSources] = useState<any[] | null>(null);
-  const [loadedAll, setLoadedAll] = useState(false);
-
-  const loadAll = async () => {
-    const { data } = await supabase.from('sources').select('*').order('name');
-    setAllSources(data);
-    setLoadedAll(true);
-  };
-
-  // Load all sources on mount
-  if (!loadedAll) {
-    loadAll();
-  }
-
-  const displaySources = allSources || sources || [];
 
   return (
     <Card className="border-border/30">
@@ -142,13 +135,13 @@ export function SourceManager() {
           </form>
         )}
 
-        {isLoading && !allSources ? (
+        {isLoading ? (
           <div className="space-y-2">{[...Array(3)].map((_, i) => <Skeleton key={i} className="h-10 w-full" />)}</div>
-        ) : displaySources.length === 0 ? (
+        ) : !sources?.length ? (
           <p className="text-xs text-muted-foreground py-4 text-center font-mono">No sources configured yet.</p>
         ) : (
           <div className="space-y-1.5">
-            {displaySources.map((src: any) => (
+            {sources.map((src) => (
               <div
                 key={src.id}
                 className={`flex items-center justify-between p-2.5 rounded-md border transition-colors ${
@@ -172,7 +165,7 @@ export function SourceManager() {
                     disabled={togglingId === src.id}
                   >
                     {src.is_active ? (
-                      <ToggleRight className="h-4 w-4 text-green-500" />
+                      <ToggleRight className="h-4 w-4 text-primary" />
                     ) : (
                       <ToggleLeft className="h-4 w-4 text-muted-foreground" />
                     )}
