@@ -109,7 +109,35 @@ const ingestOnDemand = inngest.createFunction(
   }
 );
 
+// ── Scheduled: Weekly Digest (Monday 7am UTC) ──────────────
+const generateWeeklyDigest = inngest.createFunction(
+  { id: "weekly-digest-scheduled", name: "Generate Weekly Digest" },
+  { cron: "0 7 * * 1" },
+  async ({ step }) => {
+    const result = await step.run("generate-weekly-digest", async () => {
+      const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+      const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+
+      const res = await fetch(`${supabaseUrl}/functions/v1/generate-weekly-digest`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${supabaseServiceKey}`,
+        },
+      });
+
+      if (!res.ok) {
+        throw new Error(`Weekly digest generation failed [${res.status}]: ${await res.text()}`);
+      }
+
+      return await res.json();
+    });
+
+    return { event: "weekly-digest", result };
+  }
+);
+
 export default serve({
   client: inngest,
-  functions: [ingestArticles, generateDailySummaries, ingestOnDemand],
+  functions: [ingestArticles, generateDailySummaries, ingestOnDemand, generateWeeklyDigest],
 });
