@@ -45,6 +45,17 @@ export function TopNav({ search, onSearchChange }: TopNavProps) {
             </Link>
           ))}
           <Link
+            to="/weekly-digest"
+            className={cn(
+              'px-3 py-1.5 text-xs font-medium rounded-md transition-all duration-200 whitespace-nowrap',
+              location.pathname === '/weekly-digest'
+                ? 'bg-primary/15 text-primary shadow-[inset_0_0_12px_-4px_hsl(var(--primary)/0.2)]'
+                : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
+            )}
+          >
+            Weekly Digest
+          </Link>
+          <Link
             to="/admin"
             className={cn(
               'px-3 py-1.5 text-xs font-medium rounded-md transition-all duration-200 whitespace-nowrap',
