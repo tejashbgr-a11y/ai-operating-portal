@@ -71,7 +71,7 @@ export default function HomePage() {
           <CardContent className="p-4">
             <h2 className="font-heading text-[10px] font-bold uppercase tracking-[0.2em] text-primary mb-2">Today in AI</h2>
             <ul className="space-y-1.5">
-              {todaySummary.summary_text.split('\n').filter(Boolean).map((line, i) => {
+              {todaySummary.summary_text.split('\n').filter(Boolean).filter(line => !/[\u4e00-\u9fff\u3040-\u309f\u30a0-\u30ff\uac00-\ud7af]/.test(line)).map((line, i) => {
                 const cleaned = line.replace(/^[-•]\s*/, '');
                 const [title, url] = cleaned.split('|||');
                 return (
