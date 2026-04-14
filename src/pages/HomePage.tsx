@@ -1,5 +1,5 @@
-import { useState, useMemo } from 'react';
-import { Link, useOutletContext } from 'react-router-dom';
+import { useMemo } from 'react';
+import { Link } from 'react-router-dom';
 import { ArrowRight, Activity, TrendingUp, Wrench, Code2, Zap, Sparkles } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { ArticleCard } from '@/components/ArticleCard';
@@ -17,8 +17,7 @@ const LANE_ICONS: Record<Lane, React.ReactNode> = {
 };
 
 export default function HomePage() {
-  const { search } = useOutletContext<{ search: string }>();
-  const { data: articles, isLoading } = useArticles({ limit: 80, search: search || undefined });
+  const { data: articles, isLoading } = useArticles({ limit: 80 });
   const { data: todaySummary } = useDailySummaries('general');
 
   const topPicks = useMemo(() => {

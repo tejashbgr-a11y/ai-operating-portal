@@ -1,15 +1,12 @@
-import { useState, useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
 import { TopNav } from '@/components/TopNav';
 
 export function AppLayout() {
-  const [search, setSearch] = useState('');
-
   return (
     <div className="min-h-screen bg-background bg-grid">
-      <TopNav search={search} onSearchChange={setSearch} />
+      <TopNav />
       <main className="container py-8">
-        <Outlet context={{ search }} />
+        <Outlet />
       </main>
       <footer className="border-t border-border/30 py-5">
         <div className="container text-center text-[10px] font-mono text-muted-foreground/50 uppercase tracking-widest">
