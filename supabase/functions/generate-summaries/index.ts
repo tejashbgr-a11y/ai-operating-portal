@@ -61,20 +61,21 @@ serve(async (req) => {
   // Create a general "today in AI" summary — focus on pulse + business_impact only
   const { data: topArticles } = await supabase
     .from("articles")
-    .select("title, primary_lane")
+    .select("id, title, url, primary_lane")
     .in("primary_lane", ["pulse", "business_impact"])
     .gte("published_at", yesterday)
     .order("published_at", { ascending: false })
     .limit(8);
 
   if (topArticles && topArticles.length > 0) {
-    const generalSummary = topArticles.map(a => `• ${a.title}`).join("\n");
+    // Store title|||url pairs so the frontend can render clickable links
+    const generalSummary = topArticles.map(a => `• ${a.title}|||${a.url}`).join("\n");
     await supabase.from("daily_summaries").upsert(
       {
         summary_date: today,
         lane: "general",
-        summary_text: generalSummary.slice(0, 2000),
-        top_article_ids: [],
+        summary_text: generalSummary.slice(0, 4000),
+        top_article_ids: topArticles.map(a => a.id),
       },
       { onConflict: "summary_date,lane" }
     );

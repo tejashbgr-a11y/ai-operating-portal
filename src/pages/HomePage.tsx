@@ -70,12 +70,22 @@ export default function HomePage() {
           <CardContent className="p-4">
             <h2 className="font-heading text-[10px] font-bold uppercase tracking-[0.2em] text-primary mb-2">Today in AI</h2>
             <ul className="space-y-1.5">
-              {todaySummary.summary_text.split('\n').filter(Boolean).map((line, i) => (
-                <li key={i} className="flex items-start gap-2 text-sm text-foreground/80 leading-relaxed">
-                  <span className="text-primary mt-1.5 shrink-0 h-1.5 w-1.5 rounded-full bg-primary" />
-                  <span>{line.replace(/^[-•]\s*/, '')}</span>
-                </li>
-              ))}
+              {todaySummary.summary_text.split('\n').filter(Boolean).map((line, i) => {
+                const cleaned = line.replace(/^[-•]\s*/, '');
+                const [title, url] = cleaned.split('|||');
+                return (
+                  <li key={i} className="flex items-start gap-2 text-sm leading-relaxed">
+                    <span className="text-primary mt-1.5 shrink-0 h-1.5 w-1.5 rounded-full bg-primary" />
+                    {url ? (
+                      <a href={url} target="_blank" rel="noopener noreferrer" className="text-foreground/80 hover:text-primary transition-colors underline-offset-2 hover:underline">
+                        {title}
+                      </a>
+                    ) : (
+                      <span className="text-foreground/80">{title}</span>
+                    )}
+                  </li>
+                );
+              })}
             </ul>
           </CardContent>
         </Card>
