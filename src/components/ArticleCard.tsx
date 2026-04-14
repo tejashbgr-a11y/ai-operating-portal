@@ -23,6 +23,10 @@ export function ArticleCard({ article }: ArticleCardProps) {
     ? (article.secondary_tags as string[]).slice(0, 3)
     : [];
 
+  const freshnessTimestamp = !article.published_at || new Date(article.ingested_at).getTime() > new Date(article.published_at).getTime()
+    ? article.ingested_at
+    : article.published_at;
+
   const handleSave = () => {
     const nowSaved = toggleSavedArticle(article.id);
     setSaved(nowSaved);
@@ -53,7 +57,7 @@ export function ArticleCard({ article }: ArticleCardProps) {
                 <span className="text-[10px] text-muted-foreground font-mono">{article.source}</span>
               )}
               <span className="text-[10px] text-muted-foreground font-mono">
-                {relativeTime(article.published_at)}
+                Updated {relativeTime(freshnessTimestamp)}
               </span>
             </div>
             <h3 className="font-heading font-semibold text-sm leading-snug line-clamp-2">

@@ -33,6 +33,7 @@ export function useArticles(options: UseArticlesOptions = {}) {
       let q = supabase
         .from('articles')
         .select('*')
+        .order('ingested_at', { ascending: false })
         .order('published_at', { ascending: false, nullsFirst: false })
         .limit(limit);
 
