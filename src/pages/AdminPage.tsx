@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { AlertTriangle, Clock, Database, RefreshCw, Play } from 'lucide-react';
+import { AlertTriangle, Clock, Database, RefreshCw, Play, Sparkles } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -17,7 +17,21 @@ export default function AdminPage() {
   const { data: counts, isLoading: countsLoading, refetch: refetchCounts } = useArticleCountsByLane();
   const [triggering, setTriggering] = useState(false);
   const [directIngesting, setDirectIngesting] = useState(false);
+  const [generatingDigest, setGeneratingDigest] = useState(false);
   const { toast } = useToast();
+
+  const handleGenerateDigest = async () => {
+    setGeneratingDigest(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('generate-weekly-digest');
+      if (error) throw error;
+      toast({ description: 'Weekly digest generated successfully!' });
+    } catch (e: any) {
+      toast({ description: `Digest generation failed: ${e.message}`, variant: 'destructive' });
+    } finally {
+      setGeneratingDigest(false);
+    }
+  };
 
   const latestRun = runs?.[0];
   const totalArticles = counts ? Object.values(counts).reduce((a, b) => a + b, 0) : 0;
@@ -83,6 +97,16 @@ export default function AdminPage() {
           >
             <RefreshCw className={`h-3 w-3 ${directIngesting ? 'animate-spin' : ''}`} />
             {directIngesting ? 'Ingesting…' : 'Run Ingestion Now'}
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            className="text-xs gap-1.5 border-primary/30 text-primary hover:bg-primary/10"
+            onClick={handleGenerateDigest}
+            disabled={generatingDigest}
+          >
+            <Sparkles className={`h-3 w-3 ${generatingDigest ? 'animate-pulse' : ''}`} />
+            {generatingDigest ? 'Generating…' : 'Generate Weekly Digest'}
           </Button>
         </div>
       </div>
