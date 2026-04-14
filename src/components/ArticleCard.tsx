@@ -65,7 +65,11 @@ export function ArticleCard({ article }: ArticleCardProps) {
         </div>
 
         {article.description && (
-          <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2">
+          <p className={`text-xs text-muted-foreground leading-relaxed ${
+            ['builder_lab', 'tool_radar'].includes(article.primary_lane)
+              ? 'line-clamp-5'
+              : 'line-clamp-2'
+          }`}>
             {article.description}
           </p>
         )}
