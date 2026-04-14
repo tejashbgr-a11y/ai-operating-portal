@@ -80,17 +80,6 @@ export function TopNav() {
           >
             Weekly Digest
           </Link>
-          <Link
-            to="/admin"
-            className={cn(
-              'px-3 py-1.5 text-xs font-medium rounded-md transition-all duration-200 whitespace-nowrap',
-              location.pathname === '/admin'
-                ? 'bg-primary/15 text-primary'
-                : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
-            )}
-          >
-            Admin
-          </Link>
         </nav>
 
         <div ref={wrapperRef} className="relative ml-auto w-48 lg:w-72">

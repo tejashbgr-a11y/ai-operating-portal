@@ -137,7 +137,7 @@ export default function HomePage() {
           )}
         </section>
 
-        {/* Weekly Digest CTA */}
+        {/* Weekly Digest CTA + Subscribe */}
         <aside className="space-y-4">
           <Link to="/weekly-digest">
             <Card className="border-primary/20 bg-gradient-to-br from-primary/10 to-transparent hover:border-primary/40 transition-all duration-300 cursor-pointer group relative overflow-hidden">
@@ -159,6 +159,27 @@ export default function HomePage() {
               </CardContent>
             </Card>
           </Link>
+
+          <a href="https://open.substack.com/pub/tejashbagri/" target="_blank" rel="noopener noreferrer">
+            <Card className="border-primary/20 bg-gradient-to-br from-lane-builder/10 to-transparent hover:border-lane-builder/40 transition-all duration-300 cursor-pointer group relative overflow-hidden mt-4">
+              <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-lane-builder/40 to-transparent" />
+              <CardContent className="p-5 space-y-3">
+                <div className="flex items-center gap-2">
+                  <div className="h-8 w-8 rounded-lg bg-lane-builder/15 flex items-center justify-center">
+                    <Zap className="h-4 w-4 text-lane-builder" />
+                  </div>
+                  <h3 className="font-heading font-bold text-sm">Subscribe on Substack</h3>
+                </div>
+                <p className="text-[11px] text-muted-foreground leading-relaxed">
+                  Get Tejash's AI insights delivered straight to your inbox — deep dives, trends, and curated picks.
+                </p>
+                <Button variant="outline" size="sm" className="w-full text-xs gap-1.5 border-lane-builder/30 text-lane-builder group-hover:bg-lane-builder/10 transition-colors">
+                  Subscribe Now
+                  <ArrowRight className="h-3 w-3 group-hover:translate-x-0.5 transition-transform" />
+                </Button>
+              </CardContent>
+            </Card>
+          </a>
         </aside>
       </div>
     </div>
