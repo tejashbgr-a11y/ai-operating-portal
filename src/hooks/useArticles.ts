@@ -51,8 +51,9 @@ export function useArticles(options: UseArticlesOptions = {}) {
 
   // Realtime subscription
   useEffect(() => {
+    const channelName = `articles-changes-${Math.random().toString(36).slice(2)}`;
     const channel = supabase
-      .channel('articles-changes')
+      .channel(channelName)
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'articles' }, () => {
         queryClient.invalidateQueries({ queryKey: ['articles'] });
       })
