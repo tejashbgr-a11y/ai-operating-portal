@@ -434,6 +434,12 @@ serve(async (req) => {
       continue;
     }
 
+    // Skip non-English articles (detect CJK, Arabic, Cyrillic, Thai, Devanagari characters)
+    if (/[\u4e00-\u9fff\u3040-\u309f\u30a0-\u30ff\uac00-\ud7af\u0600-\u06ff\u0400-\u04ff\u0e00-\u0e7f\u0900-\u097f]/.test(article.title)) {
+      totalMalformed++;
+      continue;
+    }
+
     const canonical = canonicalize(article.url);
     const hash = await hashString(canonical);
     const { primary_lane, secondary_tags } = classifyArticle(article.title, article.description || "", article.source || "");
