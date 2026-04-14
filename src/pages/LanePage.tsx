@@ -23,7 +23,6 @@ export default function LanePage() {
 
   const { data: articles, isLoading } = useArticles({
     lane,
-    search: search || undefined,
     timeRange: timeRange as any,
     source: source || undefined,
     limit: 50,
