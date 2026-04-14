@@ -49,7 +49,7 @@ const BUSINESS_KEYWORDS = [
   "competitive advantage", "market impact", "industry disruption",
 ];
 
-function classifyArticle(title: string, description: string, source?: string): { primary_lane: string; secondary_tags: string[] } {
+function classifyArticle(title: string, description: string, source?: string, laneHint?: string): { primary_lane: string; secondary_tags: string[] } {
   const text = `${title} ${description}`.toLowerCase();
   const tags: string[] = [];
 
@@ -69,6 +69,9 @@ function classifyArticle(title: string, description: string, source?: string): {
     source.toLowerCase().includes("operator")
   );
   const businessBoost = isAnalysisSource ? 1 : 0;
+
+  // Lane hint boost: if the article was fetched via a lane-specific query, boost that lane
+  const hintBoost = 2;
 
   // Collect tags
   if (text.includes("api")) tags.push("API");
@@ -99,20 +102,24 @@ function classifyArticle(title: string, description: string, source?: string): {
     return { primary_lane: "pulse", secondary_tags: [...new Set(tags)].slice(0, 8) };
   }
 
-  let primary_lane = "pulse";
-  const adjustedBusinessScore = businessScore + businessBoost;
-  const maxScore = Math.max(builderScore, toolScore, adjustedBusinessScore);
+  // Apply lane hint boost to scores
+  let adjustedBuilderScore = builderScore + (laneHint === "builder_lab" ? hintBoost : 0);
+  let adjustedToolScore = toolScore + (laneHint === "tool_radar" ? hintBoost : 0);
+  let adjustedBusinessScore = businessScore + businessBoost + (laneHint === "business_impact" ? hintBoost : 0);
 
-  // Require a minimum threshold for non-pulse classification
+  let primary_lane = "pulse";
+  const maxScore = Math.max(adjustedBuilderScore, adjustedToolScore, adjustedBusinessScore);
+
+  // With hint boost, a single keyword + hint is enough (score >= 2)
   if (maxScore >= 2) {
-    if (builderScore === maxScore) primary_lane = "builder_lab";
-    else if (toolScore === maxScore) primary_lane = "tool_radar";
+    if (adjustedBuilderScore === maxScore) primary_lane = "builder_lab";
+    else if (adjustedToolScore === maxScore) primary_lane = "tool_radar";
     else if (adjustedBusinessScore === maxScore) primary_lane = "business_impact";
   } else if (maxScore === 1) {
     // Single keyword match — only classify if it's a strong signal
-    if (builderScore === 1 && toolScore === 0 && adjustedBusinessScore === 0) primary_lane = "builder_lab";
-    else if (toolScore === 1 && builderScore === 0 && adjustedBusinessScore === 0) primary_lane = "tool_radar";
-    // Single business keyword is NOT enough — keep as pulse
+    if (builderScore === 1 && toolScore === 0 && businessScore === 0) primary_lane = "builder_lab";
+    else if (toolScore === 1 && builderScore === 0 && businessScore === 0) primary_lane = "tool_radar";
+    // Single business keyword is NOT enough without hint — keep as pulse
   }
 
   return { primary_lane, secondary_tags: [...new Set(tags)].slice(0, 8) };
