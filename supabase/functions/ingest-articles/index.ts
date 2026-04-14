@@ -450,7 +450,7 @@ serve(async (req) => {
 
     const canonical = canonicalize(article.url);
     const hash = await hashString(canonical);
-    const { primary_lane, secondary_tags } = classifyArticle(article.title, article.description || "", article.source || "");
+    const { primary_lane, secondary_tags } = classifyArticle(article.title, article.description || "", article.source || "", article.lane_hint || undefined);
 
     try {
       const { error } = await supabase.from("articles").insert({
