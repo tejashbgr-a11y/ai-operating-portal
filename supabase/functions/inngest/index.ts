@@ -1,5 +1,5 @@
 import { Inngest } from "https://esm.sh/inngest@3.22.0";
-import { serve } from "https://esm.sh/inngest@3.22.0/deno/fresh";
+import { serve } from "https://esm.sh/inngest@3.22.0/deno";
 
 const inngest = new Inngest({ id: "ai-operating-portal" });
 
