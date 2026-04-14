@@ -1,4 +1,4 @@
-import type { Lane } from '@/integrations/supabase/types';
+export type Lane = 'pulse' | 'business_impact' | 'tool_radar' | 'builder_lab';
 
 export interface LaneConfig {
   id: Lane;
