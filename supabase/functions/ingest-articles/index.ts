@@ -175,6 +175,7 @@ async function fetchGNews(apiKey: string): Promise<any[]> {
           image_url: a.image,
           published_at: a.publishedAt,
           source: a.source?.name || "GNews",
+          lane_hint: query_lane_hint,
           raw_provider: { provider: "gnews", original: a },
         })));
       }
