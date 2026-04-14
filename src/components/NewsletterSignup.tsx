@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { Mail, Zap } from 'lucide-react';
+import { Zap } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 export function NewsletterSignup() {
   const [email, setEmail] = useState('');
@@ -16,11 +17,28 @@ export function NewsletterSignup() {
     e.preventDefault();
     if (!email) return;
     setLoading(true);
-    setTimeout(() => {
-      toast({ description: 'Subscribed! Check your inbox.' });
+    try {
+      const { error } = await supabase.from('subscribers').insert({
+        email: email.trim().toLowerCase(),
+        wants_daily_brief: dailyBrief,
+        wants_weekly_roundup: weeklyRoundup,
+        source: 'website',
+      });
+      if (error) {
+        if (error.code === '23505') {
+          toast({ description: 'You\'re already subscribed!' });
+        } else {
+          throw error;
+        }
+      } else {
+        toast({ description: 'Subscribed! You\'ll receive AI intel in your inbox soon.' });
+      }
       setEmail('');
+    } catch (err: any) {
+      toast({ description: `Subscription failed: ${err.message}`, variant: 'destructive' });
+    } finally {
       setLoading(false);
-    }, 800);
+    }
   };
 
   return (
