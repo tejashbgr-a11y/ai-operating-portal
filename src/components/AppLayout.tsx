@@ -3,11 +3,7 @@ import { Outlet } from 'react-router-dom';
 import { TopNav } from '@/components/TopNav';
 
 export function AppLayout() {
-  const [search, setSearch] = useState(() => localStorage.getItem('aop_search') || '');
-
-  useEffect(() => {
-    localStorage.setItem('aop_search', search);
-  }, [search]);
+  const [search, setSearch] = useState('');
 
   return (
     <div className="min-h-screen bg-background bg-grid">
