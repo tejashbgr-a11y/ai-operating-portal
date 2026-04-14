@@ -18,7 +18,7 @@ const LANE_ICONS: Record<Lane, React.ReactNode> = {
 
 export default function HomePage() {
   const { data: articles, isLoading } = useArticles({ limit: 20 });
-  const { data: todaySummary } = useDailySummaries();
+  const { data: todaySummary } = useDailySummaries('general');
 
   const topPicks = useMemo(() => {
     if (!articles) return [];
@@ -27,10 +27,21 @@ export default function HomePage() {
       if (!byLane[a.primary_lane]) byLane[a.primary_lane] = [];
       byLane[a.primary_lane].push(a);
     });
+    // Ensure at least 1 from each lane, then fill remaining slots
     const picks: typeof articles = [];
+    const used = new Set<string>();
     LANE_ORDER.forEach(lane => {
-      const laneArticles = byLane[lane] || [];
-      picks.push(...laneArticles.slice(0, 2));
+      const first = (byLane[lane] || [])[0];
+      if (first) { picks.push(first); used.add(first.id); }
+    });
+    // Fill remaining with top articles across lanes
+    LANE_ORDER.forEach(lane => {
+      (byLane[lane] || []).forEach(a => {
+        if (picks.length < 8 && !used.has(a.id)) {
+          picks.push(a);
+          used.add(a.id);
+        }
+      });
     });
     return picks.slice(0, 8);
   }, [articles]);
@@ -58,7 +69,14 @@ export default function HomePage() {
         <Card className="border-primary/20 bg-primary/5 shadow-[0_0_30px_-10px_hsl(var(--primary)/0.15)]">
           <CardContent className="p-4">
             <h2 className="font-heading text-[10px] font-bold uppercase tracking-[0.2em] text-primary mb-2">Today in AI</h2>
-            <p className="text-sm text-foreground/80 leading-relaxed">{todaySummary.summary_text}</p>
+            <ul className="space-y-1.5">
+              {todaySummary.summary_text.split('\n').filter(Boolean).map((line, i) => (
+                <li key={i} className="flex items-start gap-2 text-sm text-foreground/80 leading-relaxed">
+                  <span className="text-primary mt-1.5 shrink-0 h-1.5 w-1.5 rounded-full bg-primary" />
+                  <span>{line.replace(/^[-•]\s*/, '')}</span>
+                </li>
+              ))}
+            </ul>
           </CardContent>
         </Card>
       )}

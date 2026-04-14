@@ -58,16 +58,16 @@ serve(async (req) => {
     }
   }
 
-  // Also create a general "today in AI" summary
+  // Create a general "today in AI" summary as bullet points
   const { data: topArticles } = await supabase
     .from("articles")
     .select("title")
     .gte("published_at", yesterday)
     .order("published_at", { ascending: false })
-    .limit(5);
+    .limit(6);
 
   if (topArticles && topArticles.length > 0) {
-    const generalSummary = topArticles.map(a => a.title).join(" · ");
+    const generalSummary = topArticles.map(a => `• ${a.title}`).join("\n");
     await supabase.from("daily_summaries").upsert(
       {
         summary_date: today,
