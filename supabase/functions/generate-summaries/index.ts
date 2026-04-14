@@ -58,13 +58,14 @@ serve(async (req) => {
     }
   }
 
-  // Create a general "today in AI" summary as bullet points
+  // Create a general "today in AI" summary — focus on pulse + business_impact only
   const { data: topArticles } = await supabase
     .from("articles")
-    .select("title")
+    .select("title, primary_lane")
+    .in("primary_lane", ["pulse", "business_impact"])
     .gte("published_at", yesterday)
     .order("published_at", { ascending: false })
-    .limit(6);
+    .limit(8);
 
   if (topArticles && topArticles.length > 0) {
     const generalSummary = topArticles.map(a => `• ${a.title}`).join("\n");
