@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { useParams, useOutletContext } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { ArticleCard } from '@/components/ArticleCard';
 import { Filters } from '@/components/Filters';
 import { EmptyState } from '@/components/EmptyState';
