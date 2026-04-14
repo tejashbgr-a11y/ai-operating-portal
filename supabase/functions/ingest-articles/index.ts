@@ -14,6 +14,13 @@ const NOISE_PATTERNS = [
   /police/i, /crime/i, /lawsuit against/i, /sued/i, /scandal/i,
   /divorce/i, /death/i, /died/i, /shooting/i, /bomb/i, /threat/i,
   /protest/i, /fired from/i, /resign/i, /controversy/i,
+  // Bollywood / Indian entertainment / non-AI noise
+  /bollywood/i, /first look/i, /box office/i, /trailer launch/i,
+  /film review/i, /movie review/i, /ishq/i, /jawani/i, /desi/i,
+  /cricket/i, /ipl\b/i, /bcci/i, /modi\b(?!.*\bai\b)/i,
+  /nollywood/i, /tollywood/i, /kollywood/i, /tamil movie/i,
+  /hindi movie/i, /telugu movie/i, /punjabi movie/i,
+  /celebrity gossip/i, /entertainment news/i,
 ];
 
 const BUILDER_KEYWORDS = [
@@ -163,7 +170,7 @@ async function fetchGNews(apiKey: string): Promise<any[]> {
     // Delay between requests to avoid GNews rate limiting (429)
     if (qi > 0) await new Promise(r => setTimeout(r, 1500));
     try {
-      const url = `https://gnews.io/api/v4/search?q=${encodeURIComponent(query)}&lang=en&max=10&apikey=${apiKey}`;
+      const url = `https://gnews.io/api/v4/search?q=${encodeURIComponent(query)}&lang=en&country=us&max=10&apikey=${apiKey}`;
       const res = await fetch(url);
       if (!res.ok) {
         console.error(`GNews query failed [${res.status}]: ${query}`);
@@ -447,6 +454,26 @@ serve(async (req) => {
 
     // Skip non-English articles (detect CJK, Arabic, Cyrillic, Thai, Devanagari characters)
     if (/[\u4e00-\u9fff\u3040-\u309f\u30a0-\u30ff\uac00-\ud7af\u0600-\u06ff\u0400-\u04ff\u0e00-\u0e7f\u0900-\u097f]/.test(article.title)) {
+      totalMalformed++;
+      continue;
+    }
+
+    // Skip Indian entertainment / Bollywood sources
+    const srcLower = (article.source || "").toLowerCase();
+    const BLOCKED_SOURCES = [
+      "bollywood", "times of india", "ndtv", "india today", "hindustan times",
+      "zee news", "republic", "aaj tak", "abp news", "news18 india",
+      "filmibeat", "pinkvilla", "koimoi", "bollywood hungama",
+      "mid-day", "deccan chronicle", "telugu", "tamil", "malayalam",
+    ];
+    if (BLOCKED_SOURCES.some(s => srcLower.includes(s))) {
+      totalMalformed++;
+      continue;
+    }
+
+    // Skip if title matches noise/entertainment patterns
+    const titleAndDesc = `${article.title} ${article.description || ""}`;
+    if (NOISE_PATTERNS.some(p => p.test(titleAndDesc))) {
       totalMalformed++;
       continue;
     }
