@@ -16,7 +16,6 @@ const LANE_EMPTY: Record<Lane, { title: string; description: string }> = {
 
 export default function LanePage() {
   const { lane } = useParams<{ lane: string }>();
-  const { search } = useOutletContext<{ search: string }>();
   const laneConfig = LANES[lane as Lane];
 
   const [timeRange, setTimeRange] = useState('');

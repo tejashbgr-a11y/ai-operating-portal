@@ -17,8 +17,7 @@ const LANE_ICONS: Record<Lane, React.ReactNode> = {
 };
 
 export default function HomePage() {
-  const { search } = useOutletContext<{ search: string }>();
-  const { data: articles, isLoading } = useArticles({ limit: 80, search: search || undefined });
+  const { data: articles, isLoading } = useArticles({ limit: 80 });
   const { data: todaySummary } = useDailySummaries('general');
 
   const topPicks = useMemo(() => {
