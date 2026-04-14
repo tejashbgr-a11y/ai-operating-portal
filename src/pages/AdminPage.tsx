@@ -10,6 +10,7 @@ import { getLaneLabel } from '@/lib/lanes';
 import { relativeTime } from '@/lib/time';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { SourceManager } from '@/components/admin/SourceManager';
 
 export default function AdminPage() {
   const { data: runs, isLoading: runsLoading, refetch: refetchRuns } = useIngestionRuns();
@@ -156,6 +157,9 @@ export default function AdminPage() {
           </CardContent>
         </Card>
       )}
+
+      {/* Source Manager */}
+      <SourceManager />
 
       {/* Recent runs table */}
       <Card className="border-border/30">

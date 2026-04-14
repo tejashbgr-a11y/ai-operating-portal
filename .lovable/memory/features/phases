@@ -1,0 +1,9 @@
+---
+name: Build phases
+description: MVP build phases and completion status
+type: feature
+---
+Phase 1 (DONE): UI shell, Supabase schema (7 tables), RLS, source seeding, realtime subscriptions, design system
+Phase 2 (DONE): Inngest connected, GNews/RSS/Substack/GitHub ingestion edge functions, classification logic, daily summaries, admin trigger buttons
+Phase 3 (DONE): Lane ranking refinement, admin source management (add & toggle), English-only filter, clickable Today in AI, hourly ingestion
+Phase 4 (IN PROGRESS): Newsletter signup wired to DB ✓. Email domain setup needed for daily brief + weekly roundup campaigns (Lovable built-in email).
