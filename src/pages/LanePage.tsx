@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useOutletContext } from 'react-router-dom';
 import { ArticleCard } from '@/components/ArticleCard';
 import { Filters } from '@/components/Filters';
 import { EmptyState } from '@/components/EmptyState';
@@ -16,6 +16,7 @@ const LANE_EMPTY: Record<Lane, { title: string; description: string }> = {
 
 export default function LanePage() {
   const { lane } = useParams<{ lane: string }>();
+  const { search } = useOutletContext<{ search: string }>();
   const laneConfig = LANES[lane as Lane];
 
   const [timeRange, setTimeRange] = useState('');
@@ -23,6 +24,7 @@ export default function LanePage() {
 
   const { data: articles, isLoading } = useArticles({
     lane,
+    search: search || undefined,
     timeRange: timeRange as any,
     source: source || undefined,
     limit: 50,

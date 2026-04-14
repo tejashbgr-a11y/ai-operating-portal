@@ -1,11 +1,11 @@
 import { useState, useMemo } from 'react';
-import { Link } from 'react-router-dom';
-import { ArrowRight, Activity, TrendingUp, Wrench, Code2, Zap } from 'lucide-react';
+import { Link, useOutletContext } from 'react-router-dom';
+import { ArrowRight, Activity, TrendingUp, Wrench, Code2, Zap, Sparkles } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { ArticleCard } from '@/components/ArticleCard';
-import { NewsletterSignup } from '@/components/NewsletterSignup';
 import { EmptyState } from '@/components/EmptyState';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Button } from '@/components/ui/button';
 import { useArticles, useDailySummaries } from '@/hooks/useArticles';
 import { LANES, LANE_ORDER, type Lane } from '@/lib/lanes';
 
@@ -17,7 +17,8 @@ const LANE_ICONS: Record<Lane, React.ReactNode> = {
 };
 
 export default function HomePage() {
-  const { data: articles, isLoading } = useArticles({ limit: 80 });
+  const { search } = useOutletContext<{ search: string }>();
+  const { data: articles, isLoading } = useArticles({ limit: 80, search: search || undefined });
   const { data: todaySummary } = useDailySummaries('general');
 
   const topPicks = useMemo(() => {
@@ -137,9 +138,28 @@ export default function HomePage() {
           )}
         </section>
 
-        {/* Newsletter */}
+        {/* Weekly Digest CTA */}
         <aside className="space-y-4">
-          <NewsletterSignup />
+          <Link to="/weekly-digest">
+            <Card className="border-primary/20 bg-gradient-to-br from-primary/10 to-transparent hover:border-primary/40 transition-all duration-300 cursor-pointer group relative overflow-hidden">
+              <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
+              <CardContent className="p-5 space-y-3">
+                <div className="flex items-center gap-2">
+                  <div className="h-8 w-8 rounded-lg bg-primary/15 flex items-center justify-center">
+                    <Sparkles className="h-4 w-4 text-primary" />
+                  </div>
+                  <h3 className="font-heading font-bold text-sm">Weekly Digest</h3>
+                </div>
+                <p className="text-[11px] text-muted-foreground leading-relaxed">
+                  The week's biggest AI stories, best tools, and builder updates — curated and summarized in newsletter format.
+                </p>
+                <Button variant="outline" size="sm" className="w-full text-xs gap-1.5 border-primary/30 text-primary group-hover:bg-primary/10 transition-colors">
+                  Read This Week's Digest
+                  <ArrowRight className="h-3 w-3 group-hover:translate-x-0.5 transition-transform" />
+                </Button>
+              </CardContent>
+            </Card>
+          </Link>
         </aside>
       </div>
     </div>
