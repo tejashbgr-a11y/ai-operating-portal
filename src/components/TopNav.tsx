@@ -7,14 +7,18 @@ import { cn } from '@/lib/utils';
 import { LANE_ORDER, LANES, getLaneBadgeClasses, getLaneLabel } from '@/lib/lanes';
 import { relativeTime } from '@/lib/time';
 import { useArticles } from '@/hooks/useArticles';
+import { UserMenu } from '@/components/auth/UserMenu';
+import { useAuth } from '@/contexts/AuthContext';
 
 const NAV_ITEMS = [
   { path: '/', label: 'Home' },
+  { path: '/for-you', label: 'For You' },
   ...LANE_ORDER.map(id => ({ path: `/${id}`, label: LANES[id].label })),
 ];
 
 export function TopNav() {
   const location = useLocation();
+  const { user } = useAuth();
   const [search, setSearch] = useState('');
   const [open, setOpen] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -82,7 +86,7 @@ export function TopNav() {
           </Link>
         </nav>
 
-        <div ref={wrapperRef} className="relative ml-auto w-48 lg:w-72">
+        <div ref={wrapperRef} className="relative ml-auto w-40 lg:w-64">
           <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
           <Input
             placeholder="Search articles…"
@@ -149,6 +153,10 @@ export function TopNav() {
               <p className="text-xs text-muted-foreground">No articles found for "{search}"</p>
             </div>
           )}
+        </div>
+
+        <div className="shrink-0">
+          <UserMenu />
         </div>
       </div>
     </header>
