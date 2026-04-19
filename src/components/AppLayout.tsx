@@ -1,5 +1,6 @@
 import { Outlet } from 'react-router-dom';
 import { TopNav } from '@/components/TopNav';
+import { SignInPrompt } from '@/components/auth/SignInPrompt';
 
 export function AppLayout() {
   return (
@@ -13,6 +14,7 @@ export function AppLayout() {
           AI Operating Portal — Signal for operators & builders
         </div>
       </footer>
+      <SignInPrompt />
     </div>
   );
 }
