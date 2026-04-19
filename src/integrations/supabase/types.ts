@@ -14,6 +14,41 @@ export type Database = {
   }
   public: {
     Tables: {
+      article_interactions: {
+        Row: {
+          article_id: string
+          created_at: string
+          id: string
+          interaction_type: string
+          metadata: Json | null
+          user_id: string | null
+        }
+        Insert: {
+          article_id: string
+          created_at?: string
+          id?: string
+          interaction_type: string
+          metadata?: Json | null
+          user_id?: string | null
+        }
+        Update: {
+          article_id?: string
+          created_at?: string
+          id?: string
+          interaction_type?: string
+          metadata?: Json | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "article_interactions_article_id_fkey"
+            columns: ["article_id"]
+            isOneToOne: false
+            referencedRelation: "articles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       articles: {
         Row: {
           canonical_hash: string | null
@@ -277,6 +312,72 @@ export type Database = {
           wants_daily_brief?: boolean
           wants_tool_radar?: boolean
           wants_weekly_roundup?: boolean
+        }
+        Relationships: []
+      }
+      user_preferences: {
+        Row: {
+          builder_weight: number
+          business_weight: number
+          created_at: string
+          preferred_lanes: Json
+          preferred_sources: Json
+          preferred_tags: Json
+          pulse_weight: number
+          tools_weight: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          builder_weight?: number
+          business_weight?: number
+          created_at?: string
+          preferred_lanes?: Json
+          preferred_sources?: Json
+          preferred_tags?: Json
+          pulse_weight?: number
+          tools_weight?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          builder_weight?: number
+          business_weight?: number
+          created_at?: string
+          preferred_lanes?: Json
+          preferred_sources?: Json
+          preferred_tags?: Json
+          pulse_weight?: number
+          tools_weight?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          display_name: string | null
+          email: string | null
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          email?: string | null
+          id: string
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          email?: string | null
+          id?: string
+          updated_at?: string
         }
         Relationships: []
       }
