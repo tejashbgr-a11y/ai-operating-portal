@@ -8,7 +8,6 @@ import { LANE_ORDER, LANES, getLaneBadgeClasses, getLaneLabel } from '@/lib/lane
 import { relativeTime } from '@/lib/time';
 import { useArticles } from '@/hooks/useArticles';
 import { UserMenu } from '@/components/auth/UserMenu';
-import { useAuth } from '@/contexts/AuthContext';
 
 const NAV_ITEMS = [
   { path: '/', label: 'Home' },
@@ -18,7 +17,6 @@ const NAV_ITEMS = [
 
 export function TopNav() {
   const location = useLocation();
-  const { user } = useAuth();
   const [search, setSearch] = useState('');
   const [open, setOpen] = useState(false);
   const wrapperRef = useRef<HTMLDivElement>(null);
