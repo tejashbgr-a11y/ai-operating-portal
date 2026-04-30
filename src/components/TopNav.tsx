@@ -46,7 +46,7 @@ export function TopNav() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-border/40 bg-background/80 backdrop-blur-xl">
-      <div className="container flex h-14 items-center gap-6">
+      <div className="container flex h-14 items-center gap-3 lg:gap-6">
         <Link to="/" className="flex items-center gap-2.5 shrink-0 group">
           <div className="h-7 w-7 rounded-lg bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-[0_0_20px_-4px_hsl(var(--primary)/0.5)] group-hover:shadow-[0_0_25px_-2px_hsl(var(--primary)/0.6)] transition-shadow">
             <span className="text-primary-foreground font-heading font-bold text-[10px]">AI</span>
@@ -56,7 +56,7 @@ export function TopNav() {
           </span>
         </Link>
 
-        <nav className="flex items-center gap-0.5 overflow-x-auto">
+        <nav className="flex items-center gap-0.5 overflow-x-auto no-scrollbar min-w-0 flex-1">
           {NAV_ITEMS.map(item => (
             <Link
               key={item.path}
@@ -84,7 +84,7 @@ export function TopNav() {
           </Link>
         </nav>
 
-        <div ref={wrapperRef} className="relative ml-auto w-40 lg:w-64">
+        <div ref={wrapperRef} className="relative shrink-0 w-36 md:w-44 lg:w-64">
           <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
           <Input
             placeholder="Search articles…"
