@@ -14,6 +14,7 @@ import SavedPage from "@/pages/SavedPage";
 import LikedPage from "@/pages/LikedPage";
 import SettingsPage from "@/pages/SettingsPage";
 import NotFound from "@/pages/NotFound";
+import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
@@ -32,7 +33,14 @@ const App = () => (
               <Route path="/liked" element={<LikedPage />} />
               <Route path="/settings" element={<SettingsPage />} />
               <Route path="/weekly-digest" element={<WeeklyDigestPage />} />
-              <Route path="/admin" element={<AdminPage />} />
+              <Route
+                path="/admin"
+                element={
+                  <ProtectedRoute requireAdmin>
+                    <AdminPage />
+                  </ProtectedRoute>
+                }
+              />
               <Route path="/:lane" element={<LanePage />} />
             </Route>
             <Route path="*" element={<NotFound />} />
