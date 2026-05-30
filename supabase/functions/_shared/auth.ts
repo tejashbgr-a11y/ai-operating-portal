@@ -26,12 +26,20 @@ export async function requireAdmin(req: Request, corsHeaders: Record<string, str
   if (token === serviceKey) return null;
 
   // Internal cron-to-service: accept a shared internal key header.
-  // Used by pg_cron jobs to call scheduled ingestion / summary functions
-  // without needing a real admin user.
+  // pg_cron sends the secret stored in Supabase Vault (name='internal_cron_key').
   const internalKey = req.headers.get("x-internal-key") || "";
-  const expectedInternal = Deno.env.get("LOVABLE_API_KEY") || "";
-  if (expectedInternal && internalKey && internalKey === expectedInternal) {
-    return null;
+  if (internalKey) {
+    try {
+      const admin0 = createClient(supabaseUrl, serviceKey);
+      const { data: vaultRow } = await admin0
+        .schema("vault" as never)
+        .from("decrypted_secrets")
+        .select("decrypted_secret")
+        .eq("name", "internal_cron_key")
+        .maybeSingle();
+      const expected = (vaultRow as { decrypted_secret?: string } | null)?.decrypted_secret || "";
+      if (expected && internalKey === expected) return null;
+    } catch (_) { /* fall through to user auth */ }
   }
 
   // Otherwise, validate user JWT and admin role.
