@@ -25,21 +25,11 @@ export async function requireAdmin(req: Request, corsHeaders: Record<string, str
   // Service-to-service: service role key allowed.
   if (token === serviceKey) return null;
 
-  // Internal cron-to-service: accept a shared internal key header.
-  // pg_cron sends the secret stored in Supabase Vault (name='internal_cron_key').
+  // Internal cron-to-service: accept a shared internal key header (CRON_SHARED_SECRET).
   const internalKey = req.headers.get("x-internal-key") || "";
-  if (internalKey) {
-    try {
-      const admin0 = createClient(supabaseUrl, serviceKey);
-      const { data: vaultRow } = await admin0
-        .schema("vault" as never)
-        .from("decrypted_secrets")
-        .select("decrypted_secret")
-        .eq("name", "internal_cron_key")
-        .maybeSingle();
-      const expected = (vaultRow as { decrypted_secret?: string } | null)?.decrypted_secret || "";
-      if (expected && internalKey === expected) return null;
-    } catch (_) { /* fall through to user auth */ }
+  const expectedCronKey = Deno.env.get("CRON_SHARED_SECRET") || "";
+  if (expectedCronKey && internalKey && internalKey === expectedCronKey) {
+    return null;
   }
 
   // Otherwise, validate user JWT and admin role.
