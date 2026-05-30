@@ -25,6 +25,13 @@ export async function requireAdmin(req: Request, corsHeaders: Record<string, str
   // Service-to-service: service role key allowed.
   if (token === serviceKey) return null;
 
+  // Internal cron-to-service: accept a shared internal key header (CRON_SHARED_SECRET).
+  const internalKey = req.headers.get("x-internal-key") || "";
+  const expectedCronKey = Deno.env.get("CRON_SHARED_SECRET") || "";
+  if (expectedCronKey && internalKey && internalKey === expectedCronKey) {
+    return null;
+  }
+
   // Otherwise, validate user JWT and admin role.
   const sb = createClient(supabaseUrl, anonKey, {
     global: { headers: { Authorization: `Bearer ${token}` } },
