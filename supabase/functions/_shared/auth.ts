@@ -12,6 +12,14 @@ export async function requireAdmin(req: Request, corsHeaders: Record<string, str
   const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
   const anonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
 
+  // Internal cron-to-service: accept a shared internal key header (CRON_SHARED_SECRET).
+  // Checked first so pg_cron calls without an Authorization header still succeed.
+  const internalKey = req.headers.get("x-internal-key") || "";
+  const expectedCronKey = Deno.env.get("CRON_SHARED_SECRET") || "";
+  if (expectedCronKey && internalKey && internalKey === expectedCronKey) {
+    return null;
+  }
+
   const auth = req.headers.get("Authorization") || "";
   const token = auth.replace(/^Bearer\s+/i, "").trim();
 
@@ -24,13 +32,6 @@ export async function requireAdmin(req: Request, corsHeaders: Record<string, str
 
   // Service-to-service: service role key allowed.
   if (token === serviceKey) return null;
-
-  // Internal cron-to-service: accept a shared internal key header (CRON_SHARED_SECRET).
-  const internalKey = req.headers.get("x-internal-key") || "";
-  const expectedCronKey = Deno.env.get("CRON_SHARED_SECRET") || "";
-  if (expectedCronKey && internalKey && internalKey === expectedCronKey) {
-    return null;
-  }
 
   // Otherwise, validate user JWT and admin role.
   const sb = createClient(supabaseUrl, anonKey, {
