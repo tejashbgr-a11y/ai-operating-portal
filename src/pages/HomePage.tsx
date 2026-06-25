@@ -8,6 +8,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { useArticles, useDailySummaries } from '@/hooks/useArticles';
 import { LANES, LANE_ORDER, type Lane } from '@/lib/lanes';
+import { LastUpdatedBadge } from '@/components/LastUpdatedBadge';
 
 const LANE_ICONS: Record<Lane, React.ReactNode> = {
   pulse: <Activity className="h-4 w-4" />,
@@ -62,6 +63,7 @@ export default function HomePage() {
         <p className="text-sm text-muted-foreground max-w-lg leading-relaxed">
           Your daily signal for AI developments, business impact, tools, and builder resources — curated for operators, founders, and professionals.
         </p>
+        <div className="pt-1"><LastUpdatedBadge /></div>
       </section>
 
       {/* Today in AI strip */}
