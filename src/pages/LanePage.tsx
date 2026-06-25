@@ -6,6 +6,7 @@ import { EmptyState } from '@/components/EmptyState';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useArticles } from '@/hooks/useArticles';
 import { LANES, type Lane } from '@/lib/lanes';
+import { LastUpdatedBadge } from '@/components/LastUpdatedBadge';
 
 const LANE_EMPTY: Record<Lane, { title: string; description: string }> = {
   pulse: { title: 'No Pulse updates yet', description: 'Major AI developments and news will show up here.' },
@@ -48,6 +49,7 @@ export default function LanePage() {
         </div>
         <h1 className={`font-heading text-2xl font-bold ${laneConfig.textClass}`}>{laneConfig.label}</h1>
         <p className="text-sm text-muted-foreground">{laneConfig.shortDescription}</p>
+        <LastUpdatedBadge lane={lane} />
       </div>
 
       <Filters
