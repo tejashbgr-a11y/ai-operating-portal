@@ -2,7 +2,9 @@ export function relativeTime(dateStr: string | null): string {
   if (!dateStr) return '';
   const date = new Date(dateStr);
   const now = new Date();
-  const diffMs = now.getTime() - date.getTime();
+  let diffMs = now.getTime() - date.getTime();
+  // Treat future timestamps (clock skew / sandbox time drift) as just now
+  if (diffMs < 0) diffMs = 0;
   const diffMin = Math.floor(diffMs / 60000);
   if (diffMin < 1) return 'just now';
   if (diffMin < 60) return `${diffMin}m ago`;
