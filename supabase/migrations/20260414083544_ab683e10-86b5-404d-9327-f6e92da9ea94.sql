@@ -1,1 +1,0 @@
-ALTER TABLE public.daily_summaries ADD CONSTRAINT unique_summary_date_lane UNIQUE (summary_date, lane);
